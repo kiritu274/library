@@ -39,19 +39,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.library.R
+import com.example.library.data.AuthViewModel
+import com.example.library.navigation.ROUTE_REGISTER
 
 @Composable
 fun LoginScreen (navController: NavController){
+    val authViewModel:AuthViewModel = viewModel()
     var email by remember { mutableStateOf(value = "") }
     var password by remember{ mutableStateOf(value = "")  }
     var context = LocalContext.current
+    val passwordVisible by remember { mutableStateOf(false) }
     Column  (modifier = Modifier
         .fillMaxSize()
         .background(color = Color.Black)
@@ -91,9 +98,12 @@ fun LoginScreen (navController: NavController){
             modifier = Modifier.wrapContentWidth().align(Alignment.CenterHorizontally),
             shape = RoundedCornerShape(16.dp),
             leadingIcon = { Icon(imageVector = Icons.Default.Lock,
-                contentDescription = "Lock icon") })
+                contentDescription = "Lock icon") },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation())
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {},
+        Button(onClick = {
+            authViewModel.login(email,password,navController,context)
+        },
             modifier = Modifier.wrapContentWidth().align(Alignment.CenterHorizontally).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(Color.Magenta)) {
             Text(text = "Login")
@@ -105,6 +115,7 @@ fun LoginScreen (navController: NavController){
             modifier = Modifier.wrapContentWidth()
                 .align(Alignment.CenterHorizontally)
                 .clickable{
+                    navController.navigate(ROUTE_REGISTER)
 
                 })
     }

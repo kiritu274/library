@@ -1,6 +1,7 @@
 package com.example.library.ui.theme.screens.register
 
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +53,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.library.R
 import com.example.library.data.AuthViewModel
+import com.example.library.navigation.ROUTE_LOGIN
+import kotlin.jvm.java
 
 @Composable
 fun RegisterScreen(navController: NavController){
@@ -60,6 +65,7 @@ fun RegisterScreen(navController: NavController){
     var email by remember { mutableStateOf(value = "") }
     var password by remember{ mutableStateOf(value = "")  }
     val context = LocalContext.current
+    val passwordVisible by remember { mutableStateOf(false) }
     Column (modifier = Modifier.fillMaxSize()
         .background(color = Color.Black)
         .padding(50.dp).fillMaxHeight().fillMaxWidth(), verticalArrangement = Arrangement.Center
@@ -137,7 +143,8 @@ fun RegisterScreen(navController: NavController){
             modifier = Modifier.wrapContentWidth().align(Alignment.CenterHorizontally),
             shape = RoundedCornerShape(16.dp),
             leadingIcon = { Icon(imageVector = Icons.Default.Lock,
-                contentDescription = "lock icon") }
+                contentDescription = "lock icon") },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
@@ -154,6 +161,8 @@ fun RegisterScreen(navController: NavController){
             modifier = Modifier.wrapContentWidth()
                 .align(Alignment.CenterHorizontally)
                 .clickable{
+                    navController.navigate(ROUTE_LOGIN)
+
 
                 })
 

@@ -12,6 +12,8 @@ import com.example.library.ui.theme.screens.SplashScreen
 import com.example.library.ui.theme.screens.dashboard.DashboardScreen
 import com.example.library.ui.theme.screens.login.LoginScreen
 import com.example.library.ui.theme.screens.products.AddproductScreen
+import com.example.library.ui.theme.screens.products.UpdateproductScreen
+import com.example.library.ui.theme.screens.products.ViewProducts
 import com.example.library.ui.theme.screens.register.RegisterScreen
 
 @Composable
@@ -24,6 +26,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController(),startD
         composable (ROUTE_LOGIN){ LoginScreen(navController) }
         composable (ROUTE_DASHBOARD){ DashboardScreen(navController) }
         composable (ROUTE_ADD_PRODUCT){ AddproductScreen(navController) }
+        composable(ROUTE_VIEW_PRODUCTS){ ViewProducts(navController) }
+        composable("$ROUTE_UPDATE_PRODUCT/{productId}") {
+                passedData -> UpdateproductScreen(
+            navController, passedData.arguments?.getString("productId")!! )
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.library.ui.theme.screens.products
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -16,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -30,24 +31,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.library.R
+import com.example.library.data.ProductViewModel
+import com.example.library.navigation.ROUTE_VIEW_PRODUCTS
+
 @Composable
 fun AddproductScreen(navController: NavController){
     val imageUri = rememberSaveable(){ mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri:Uri? ->uri?.let{imageUri.value=it} }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
+    { uri:Uri? ->uri?.let{imageUri.value=it} }
     var productname by remember { mutableStateOf(value = "") }
     var productquantity by remember { mutableStateOf(value = "") }
     var productprice by remember { mutableStateOf(value = "") }
+    var productbrand by remember { mutableStateOf(value = "") }
     var desc by remember { mutableStateOf(value = "") }
+    val productViewModel : ProductViewModel =viewModel()
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally){
@@ -88,6 +98,11 @@ fun AddproductScreen(navController: NavController){
             label = {Text(text = "Unit Product Price")},
             placeholder = {Text(text = "Please enter product price")},
             modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = productbrand,
+            onValueChange = {newBrand->productbrand=newBrand},
+            label = {Text(text = "Product Brand")},
+            placeholder = {Text(text = "Please enter  product brand")},
+            modifier = Modifier.fillMaxWidth())
         OutlinedTextField(value = desc,
             onValueChange = {newDes->desc=newDes},
             label = {Text(text = "Brief description")},
@@ -96,14 +111,16 @@ fun AddproductScreen(navController: NavController){
             singleLine = false)
         Spacer(modifier = Modifier.height(10.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(onClick = {},) {Text(text = "HOME") }
-            Button(onClick = {},
-                colors = ButtonDefaults.buttonColors(Color.Green)) {
-                Text(text = "SAVE")}
-
-
+        Row (modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween){
+            Button(onClick = {
+                navController.navigate(ROUTE_VIEW_PRODUCTS)
+            }) { Text(text = "All Products") }
+            Button(onClick = {
+                imageUri.value?.let {
+                    productViewModel.uploadProductWithImage(it, context, productname, productquantity, productprice,productbrand,desc)
+                } ?: Toast.makeText(context, "Please pick an image", Toast.LENGTH_SHORT).show()
+            }) { Text(text = "SAVE") }
         }
 
     }

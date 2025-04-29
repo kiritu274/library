@@ -85,5 +85,9 @@ class AuthViewModel: ViewModel() {
                 }
             }
     }
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
+    }
+
 
 }
